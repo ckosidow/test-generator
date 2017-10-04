@@ -27,7 +27,7 @@ public class TestClass
 
     public TestClass(final String className) throws IOException, ClassNotFoundException
     {
-        final List<String> lines = Files.readAllLines(Paths.get("src/cs411/testGenerator/inputClasses/" + className + ".java"));
+        final List<String> lines = Files.readAllLines(Paths.get("src/testGenerator/inputClasses/" + className + ".java"));
 
         this.className = className;
         this.body = IntStream.range(1, lines.size()).boxed().collect(Collectors.toMap(index -> index, lines::get));
@@ -98,8 +98,7 @@ public class TestClass
 
     public void findMethods() throws ClassNotFoundException
     {
-        final List<Method> allMethods = Arrays.asList(Class.forName("testGenerator.inputClasses." + className)
-                .getDeclaredMethods());
+        final List<Method> allMethods = Arrays.asList(Class.forName("testGenerator.inputClasses." + className).getDeclaredMethods());
 
         for (final Method method : allMethods) {
             if (ACCESSIBLE_MODIFIERS.contains(method.getModifiers())) {

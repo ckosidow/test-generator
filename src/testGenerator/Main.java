@@ -9,7 +9,7 @@ import java.util.Map;
 import java.util.StringJoiner;
 
 public class Main {
-    private static final String OUPUT_LOCATION = "test/cs411/testGenerator/outputClasses/";
+    private static final String OUPUT_LOCATION = "test/testGenerator/outputClasses/";
 
     public static void main(final String... args) {
         try {
