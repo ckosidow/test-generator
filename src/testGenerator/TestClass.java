@@ -6,9 +6,10 @@ import java.lang.reflect.Modifier;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.*;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Scanner;
 
 public class TestClass
 {
@@ -16,7 +17,7 @@ public class TestClass
     private boolean isRobust;
     private boolean isOnOutput;
     private String className;
-    private Map<Integer, String> body = new HashMap<>();
+    private List<Line> body = new ArrayList<>();
     private List<TestClassMethod<?>> testClassMethods = new ArrayList<>();
     private static final List<Integer> ACCESSIBLE_MODIFIERS = Arrays.asList(0, Modifier.PUBLIC, Modifier.PROTECTED);
 
@@ -28,9 +29,14 @@ public class TestClass
     public TestClass(final String className) throws IOException, ClassNotFoundException
     {
         final List<String> lines = Files.readAllLines(Paths.get("src/testGenerator/inputClasses/" + className + ".java"));
+        final int count = lines.size();
 
         this.className = className;
-        this.body = IntStream.range(1, lines.size()).boxed().collect(Collectors.toMap(index -> index, lines::get));
+
+        for (int i = 0; i < count; i++) {
+            body.add(new Line(i, lines.get(i)));
+        }
+
         this.findTestType();
         this.findRobustness();
         this.findMethods();
@@ -76,14 +82,14 @@ public class TestClass
         this.className = className;
     }
 
-    public Map<Integer, String> getBody()
+    public List<Line> getBody()
     {
-        return body;
+        return new ArrayList<>(body);
     }
 
-    public void setBody(final Map<Integer, String> body)
+    public void setBody(final List<Line> body)
     {
-        this.body = body;
+        this.body = body == null ? new ArrayList<>() : new ArrayList<>(body);
     }
 
     public List<TestClassMethod<?>> getTestClassMethods()
@@ -120,24 +126,19 @@ public class TestClass
 
     private void findRobustness()
     {
-        final Scanner input = new Scanner(System.in, StandardCharsets.UTF_8.name());
-
         System.out.println("Generate robust test cases?");
-        isRobust = input.nextBoolean();
+        isRobust = new Scanner(System.in, StandardCharsets.UTF_8.name()).nextBoolean();
     }
 
     private void findTestType()
     {
-        final Scanner input = new Scanner(System.in, StandardCharsets.UTF_8.name());
-
         System.out.println("What type of tests to generate?");
-        testType = TestType.valueOf(input.nextLine().trim().toUpperCase().replace(' ', '_'));
+        testType = TestType.valueOf(new Scanner(System.in, StandardCharsets.UTF_8.name()).nextLine().trim().toUpperCase().replace(' ', '_'));
     }
 
-    private void findIsOnOutput() {
-        final Scanner input = new Scanner(System.in, StandardCharsets.UTF_8.name());
-
+    private void findIsOnOutput()
+    {
         System.out.println("Test on output of program?");
-        isOnOutput = input.nextBoolean();
+        isOnOutput = new Scanner(System.in, StandardCharsets.UTF_8.name()).nextBoolean();
     }
 }

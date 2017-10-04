@@ -5,14 +5,15 @@ import org.springframework.core.LocalVariableTableParameterNameDiscoverer;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class TestClassMethod<T>
 {
     private T returnType;
     private String methodName;
-    private Map<Integer, String> body = new HashMap<>();
+    private List<Line> body = new ArrayList<>();
     private List<TestClassParameter<?>> testClassParameters = new ArrayList<>();
     private int visibility;
 
@@ -36,12 +37,12 @@ public class TestClassMethod<T>
         this.methodName = methodName;
     }
 
-    public Map<Integer, String> getBody()
+    public List<Line> getBody()
     {
         return body;
     }
 
-    public void setBody(final Map<Integer, String> body)
+    public void setBody(final List<Line> body)
     {
         this.body = body;
     }
@@ -66,37 +67,32 @@ public class TestClassMethod<T>
         this.visibility = visibility;
     }
 
-    public void findMethodBody(final Map<Integer, String> classBody) {
+    public void findMethodBody(final List<Line> classBody) {
         boolean inBody = false;
         int openBracketCount = 0;
         int closeBracketCount = 0;
 
-        for (final Map.Entry<Integer, String> line : classBody.entrySet()) {
+        for (final Line line : classBody) {
             if (!inBody) {
-                if (line.getValue().matches(".*" + returnType + "\\s*" + methodName + "(\\s*\\(.*|\\s*&)")) {
-                    body.put(line.getKey(), line.getValue());
+                if (line.getContent().matches(".*" + returnType + "\\s*" + methodName + "(\\s*\\(.*|\\s*&)")) {
+                    body.add(line);
 
-                    openBracketCount = StringUtils.countMatches(line.getValue(), "{");
-                    closeBracketCount = StringUtils.countMatches(line.getValue(), "}");
+                    openBracketCount = StringUtils.countMatches(line.getContent(), "{");
+                    closeBracketCount = StringUtils.countMatches(line.getContent(), "}");
 
                     inBody = true;
                 }
             } else {
-                body.put(line.getKey(), line.getValue());
+                body.add(line);
 
-                openBracketCount += StringUtils.countMatches(line.getValue(), "{");
-                closeBracketCount += StringUtils.countMatches(line.getValue(), "}");
+                openBracketCount += StringUtils.countMatches(line.getContent(), "{");
+                closeBracketCount += StringUtils.countMatches(line.getContent(), "}");
 
                 if (openBracketCount > 0 && openBracketCount - closeBracketCount < 1) {
                     break;
                 }
             }
         }
-
-        body = body.entrySet()
-                .stream()
-                .sorted(Map.Entry.comparingByKey())
-                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (v1, v2) -> v1, LinkedHashMap::new));
     }
 
     public void findParameters(final Method reflectMethod)

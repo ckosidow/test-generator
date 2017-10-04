@@ -1,6 +1,6 @@
-package cs411.testGenerator.outputClasses;
+package testGenerator.outputClasses;
 
-import cs411.testGenerator.inputClasses.ComputeNextDate;
+import testGenerator.inputClasses.ComputeNextDate;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
