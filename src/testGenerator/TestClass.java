@@ -1,4 +1,4 @@
-package cs411.testGenerator;
+package testGenerator;
 
 import java.io.IOException;
 import java.lang.reflect.Method;
@@ -98,7 +98,7 @@ public class TestClass
 
     public void findMethods() throws ClassNotFoundException
     {
-        final List<Method> allMethods = Arrays.asList(Class.forName("cs411.testGenerator.inputClasses." + className)
+        final List<Method> allMethods = Arrays.asList(Class.forName("testGenerator.inputClasses." + className)
                 .getDeclaredMethods());
 
         for (final Method method : allMethods) {

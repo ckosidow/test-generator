@@ -1,4 +1,4 @@
-package cs411.testGenerator;
+package testGenerator;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -8,12 +8,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.StringJoiner;
 
-public class Main
-{
+public class Main {
     private static final String OUPUT_LOCATION = "test/cs411/testGenerator/outputClasses/";
 
-    public static void main(final String... args)
-    {
+    public static void main(final String... args) {
         try {
             generateTestCases("ComputeTriangle");
             generateTestCases("ComputeNextDate");
@@ -23,22 +21,20 @@ public class Main
         }
     }
 
-    private static void generateTestCases(final String className) throws IOException, ClassNotFoundException
-    {
+    private static void generateTestCases(final String className) throws IOException, ClassNotFoundException {
         writeTestCases(new TestClass(className));
     }
 
-    private static void writeTestCases(final TestClass testClass)
-    {
+    private static void writeTestCases(final TestClass testClass) {
         final String className = testClass.getClassName();
 
         try (final FileOutputStream outStream = new FileOutputStream(OUPUT_LOCATION + "Test" + className + ".java")) {
             final String classInstanceName = "mock" + className;
             final TestType testType = testClass.getTestType();
 
-            outStream.write(("package cs411.testGenerator.outputClasses;" + System.lineSeparator()
+            outStream.write(("package testGenerator.outputClasses;" + System.lineSeparator()
                     + System.lineSeparator()
-                    + "import cs411.testGenerator.inputClasses." + className + ';' + System.lineSeparator()
+                    + "import testGenerator.inputClasses." + className + ';' + System.lineSeparator()
                     + "import org.junit.Test;" + System.lineSeparator()
                     + "import org.junit.runner.RunWith;" + System.lineSeparator()
                     + "import org.mockito.InjectMocks;" + System.lineSeparator()
@@ -65,8 +61,8 @@ public class Main
     private static void determineBVATests(
             final TestClass testClass,
             final FileOutputStream outStream,
-            final String classInstanceName) throws IOException
-    {
+            final String classInstanceName
+    ) throws IOException {
         for (final TestClassMethod<?> method : testClass.getTestClassMethods()) {
             final List<StringJoiner> joinerList = new ArrayList<>();
             final int paramCount = method.getTestClassParameters().size();
@@ -114,8 +110,8 @@ public class Main
     private static void determineWCTests(
             final TestClass testClass,
             final FileOutputStream outStream,
-            final String classInstanceName) throws IOException
-    {
+            final String classInstanceName
+    ) throws IOException {
         for (final TestClassMethod<?> method : testClass.getTestClassMethods()) {
             final List<StringJoiner> joinerList = new ArrayList<>();
             final int paramCount = method.getTestClassParameters().size();
@@ -161,8 +157,8 @@ public class Main
             final int startSubGroup,
             final int repeatSize,
             final List<StringJoiner> joinerList,
-            final int value)
-    {
+            final int value
+    ) {
         for (int y = 0; y < repeatSize; y++) {
             joinerList.get(startGroup + (repeatSize * startSubGroup) + y).add(String.valueOf(value));
         }
@@ -172,8 +168,8 @@ public class Main
             final FileOutputStream outStream,
             final String classInstanceName,
             final TestClassMethod method,
-            final List<StringJoiner> joinerList) throws IOException
-    {
+            final List<StringJoiner> joinerList
+    ) throws IOException {
         final int testCount = joinerList.size();
 
         for (int i = 0; i < testCount; i++) {

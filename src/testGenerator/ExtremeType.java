@@ -1,4 +1,4 @@
-package cs411.testGenerator;
+package testGenerator;
 
 public enum ExtremeType
 {

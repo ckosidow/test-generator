@@ -1,4 +1,4 @@
-package cs411.testGenerator.inputClasses;
+package testGenerator.inputClasses;
 
 import java.util.Arrays;
 import java.util.List;

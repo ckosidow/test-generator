@@ -1,4 +1,4 @@
-package cs411.testGenerator.inputClasses;
+package testGenerator.inputClasses;
 
 public class ComputeCommission
 {

@@ -1,4 +1,4 @@
-package cs411.testGenerator;
+package testGenerator;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.core.LocalVariableTableParameterNameDiscoverer;

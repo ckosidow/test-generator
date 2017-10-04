@@ -1,4 +1,4 @@
-package cs411.testGenerator;
+package testGenerator;
 
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
