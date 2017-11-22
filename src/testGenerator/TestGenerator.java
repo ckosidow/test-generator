@@ -129,7 +129,7 @@ public class TestGenerator
                 final int max = Integer.parseInt(parameterExtremes.get(ExtremeType.GLOBAL_MAX));
                 final int min = Integer.parseInt(parameterExtremes.get(ExtremeType.GLOBAL_MIN));
                 final int mid = (max + min) / 2;
-                final int uniqueToParam = (int) Math.pow(uniqueTestCount, i);
+                final int uniqueToParam = (int) StrictMath.pow(uniqueTestCount, i);
                 final int repeatSize = joinerList.size() / (int) Math.pow(uniqueTestCount, i + 1);
                 final int groupSize = joinerList.size() / uniqueToParam;
 
