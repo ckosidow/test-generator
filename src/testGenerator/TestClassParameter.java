@@ -1,6 +1,7 @@
 package testGenerator;
 
 import java.nio.charset.StandardCharsets;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
@@ -33,12 +34,14 @@ public class TestClassParameter<T>
 
     public Map<ExtremeType, String> getExtremes()
     {
-        return extremes;
+        return Collections.unmodifiableMap(extremes);
     }
 
     public void setExtremes(final Map<ExtremeType, String> extremes)
     {
-        this.extremes = extremes;
+        this.extremes = extremes == null
+                ? new HashMap<>()
+                : new HashMap<>(extremes);
     }
 
     public void findExtremes()
@@ -48,7 +51,7 @@ public class TestClassParameter<T>
         System.out.println("What is the max value for " + name + '?');
         extremes.put(ExtremeType.GLOBAL_MAX, input.nextLine());
 
-        System.out.println("Whas is the min value for " + name + '?');
+        System.out.println("What is the min value for " + name + '?');
         extremes.put(ExtremeType.GLOBAL_MIN, input.nextLine());
     }
 }

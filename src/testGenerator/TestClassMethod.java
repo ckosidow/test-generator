@@ -39,22 +39,26 @@ public class TestClassMethod<T>
 
     public List<Line> getBody()
     {
-        return body;
+        return new ArrayList<>(body);
     }
 
     public void setBody(final List<Line> body)
     {
-        this.body = body;
+        this.body = body == null
+                ? new ArrayList<>()
+                : new ArrayList<>(body);
     }
 
     public List<TestClassParameter<?>> getTestClassParameters()
     {
-        return testClassParameters;
+        return new ArrayList<>(testClassParameters);
     }
 
     public void setTestClassParameters(final List<TestClassParameter<?>> testClassParameters)
     {
-        this.testClassParameters = testClassParameters;
+        this.testClassParameters = testClassParameters == null
+                ? new ArrayList<>()
+                : new ArrayList<>(testClassParameters);
     }
 
     public int getVisibility()
@@ -67,7 +71,8 @@ public class TestClassMethod<T>
         this.visibility = visibility;
     }
 
-    public void findMethodBody(final List<Line> classBody) {
+    public void findMethodBody(final List<Line> classBody)
+    {
         boolean inBody = false;
         int openBracketCount = 0;
         int closeBracketCount = 0;
@@ -97,14 +102,15 @@ public class TestClassMethod<T>
 
     public void findParameters(final Method reflectMethod)
     {
-        this.findParameterInfo(reflectMethod);
+        findParameterInfo(reflectMethod);
 
         for (final TestClassParameter<?> testClassParameter : testClassParameters) {
             testClassParameter.findExtremes();
         }
     }
 
-    private void findParameterInfo(final Method reflectMethod) {
+    private void findParameterInfo(final Method reflectMethod)
+    {
         final List<Parameter> reflectParameters = Arrays.asList(reflectMethod.getParameters());
 
         for (int i = 0; i < reflectParameters.size(); i++) {

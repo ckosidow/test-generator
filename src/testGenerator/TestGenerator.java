@@ -8,24 +8,24 @@ import java.util.List;
 import java.util.Map;
 import java.util.StringJoiner;
 
-public class Main {
+public class TestGenerator
+{
     private static final String OUPUT_LOCATION = "test/testGenerator/outputClasses/";
 
-    public static void main(final String... args) {
-        try {
-            generateTestCases("ComputeTriangle");
-            generateTestCases("ComputeNextDate");
-            generateTestCases("ComputeCommission");
-        } catch (final IOException | ClassNotFoundException e) {
-            System.err.println("Class not found: " + e.getMessage());
+    public static void main(final String... classNames) throws IOException, ClassNotFoundException
+    {
+        for (final String className : classNames) {
+            generateTestCases(className);
         }
     }
 
-    private static void generateTestCases(final String className) throws IOException, ClassNotFoundException {
+    private static void generateTestCases(final String className) throws IOException, ClassNotFoundException
+    {
         writeTestCases(new TestClass(className));
     }
 
-    private static void writeTestCases(final TestClass testClass) {
+    private static void writeTestCases(final TestClass testClass)
+    {
         final String className = testClass.getClassName();
 
         try (final FileOutputStream outStream = new FileOutputStream(OUPUT_LOCATION + "Test" + className + ".java")) {
@@ -61,16 +61,17 @@ public class Main {
     private static void determineBVATests(
             final TestClass testClass,
             final FileOutputStream outStream,
-            final String classInstanceName
-    ) throws IOException {
+            final String classInstanceName) throws IOException
+    {
         for (final TestClassMethod<?> method : testClass.getTestClassMethods()) {
             final List<StringJoiner> joinerList = new ArrayList<>();
             final int paramCount = method.getTestClassParameters().size();
             final int uniqueTestCount = testClass.isRobust()
                     ? 6
                     : 4;
+            final int testAmt = uniqueTestCount * paramCount + 1;
 
-            for (int i = 0; i < uniqueTestCount * paramCount + 1; i++) {
+            for (int i = 0; i < testAmt; i++) {
                 joinerList.add(new StringJoiner(", ", "(", ")"));
             }
 
@@ -110,8 +111,8 @@ public class Main {
     private static void determineWCTests(
             final TestClass testClass,
             final FileOutputStream outStream,
-            final String classInstanceName
-    ) throws IOException {
+            final String classInstanceName) throws IOException
+    {
         for (final TestClassMethod<?> method : testClass.getTestClassMethods()) {
             final List<StringJoiner> joinerList = new ArrayList<>();
             final int paramCount = method.getTestClassParameters().size();
@@ -157,8 +158,8 @@ public class Main {
             final int startSubGroup,
             final int repeatSize,
             final List<StringJoiner> joinerList,
-            final int value
-    ) {
+            final int value)
+    {
         for (int y = 0; y < repeatSize; y++) {
             joinerList.get(startGroup + (repeatSize * startSubGroup) + y).add(String.valueOf(value));
         }
@@ -168,8 +169,8 @@ public class Main {
             final FileOutputStream outStream,
             final String classInstanceName,
             final TestClassMethod method,
-            final List<StringJoiner> joinerList
-    ) throws IOException {
+            final List<StringJoiner> joinerList) throws IOException
+    {
         final int testCount = joinerList.size();
 
         for (int i = 0; i < testCount; i++) {

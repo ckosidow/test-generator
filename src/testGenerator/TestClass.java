@@ -37,9 +37,9 @@ public class TestClass
             body.add(new Line(i, lines.get(i)));
         }
 
-        this.findTestType();
-        this.findRobustness();
-        this.findMethods();
+        findTestType();
+        findRobustness();
+        findMethods();
     }
 
     public TestType getTestType()
@@ -89,20 +89,24 @@ public class TestClass
 
     public void setBody(final List<Line> body)
     {
-        this.body = body == null ? new ArrayList<>() : new ArrayList<>(body);
+        this.body = body == null
+                ? new ArrayList<>()
+                : new ArrayList<>(body);
     }
 
     public List<TestClassMethod<?>> getTestClassMethods()
     {
-        return testClassMethods;
+        return new ArrayList<>(testClassMethods);
     }
 
     public void setTestClassMethods(final List<TestClassMethod<?>> testClassMethods)
     {
-        this.testClassMethods = testClassMethods;
+        this.testClassMethods = testClassMethods == null
+                ? new ArrayList<>()
+                : new ArrayList<>(testClassMethods);
     }
 
-    public void findMethods() throws ClassNotFoundException
+    private void findMethods() throws ClassNotFoundException
     {
         final List<Method> allMethods = Arrays.asList(Class.forName("testGenerator.inputClasses." + className).getDeclaredMethods());
 
