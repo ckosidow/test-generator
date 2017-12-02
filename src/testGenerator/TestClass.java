@@ -3,28 +3,18 @@ package testGenerator;
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Scanner;
 
 public class TestClass
 {
-    private TestType testType;
-    private boolean isRobust;
-    private boolean isOnOutput;
-    private String className;
-    private List<Line> body = new ArrayList<>();
-    private List<TestClassMethod<?>> testClassMethods = new ArrayList<>();
+    private final String className;
+    private final List<Line> body = new ArrayList<>();
+    private final List<TestClassMethod> testClassMethods = new ArrayList<>();
     private static final List<Integer> ACCESSIBLE_MODIFIERS = Arrays.asList(0, Modifier.PUBLIC, Modifier.PROTECTED);
-
-    public TestClass()
-    {
-
-    }
 
     public TestClass(final String className) throws IOException, ClassNotFoundException
     {
@@ -37,39 +27,7 @@ public class TestClass
             body.add(new Line(i, lines.get(i)));
         }
 
-        findTestType();
-        findRobustness();
         findMethods();
-    }
-
-    public TestType getTestType()
-    {
-        return testType;
-    }
-
-    public void setTestType(final TestType testType)
-    {
-        this.testType = testType;
-    }
-
-    public boolean isRobust()
-    {
-        return isRobust;
-    }
-
-    public void setRobust(final boolean robust)
-    {
-        isRobust = robust;
-    }
-
-    public boolean isOnOutput()
-    {
-        return isOnOutput;
-    }
-
-    public void setOnOutput(final boolean onOutput)
-    {
-        isOnOutput = onOutput;
     }
 
     public String getClassName()
@@ -77,33 +35,9 @@ public class TestClass
         return className;
     }
 
-    public void setClassName(final String className)
-    {
-        this.className = className;
-    }
-
-    public List<Line> getBody()
-    {
-        return new ArrayList<>(body);
-    }
-
-    public void setBody(final List<Line> body)
-    {
-        this.body = body == null
-                ? new ArrayList<>()
-                : new ArrayList<>(body);
-    }
-
-    public List<TestClassMethod<?>> getTestClassMethods()
+    public List<TestClassMethod> getTestClassMethods()
     {
         return new ArrayList<>(testClassMethods);
-    }
-
-    public void setTestClassMethods(final List<TestClassMethod<?>> testClassMethods)
-    {
-        this.testClassMethods = testClassMethods == null
-                ? new ArrayList<>()
-                : new ArrayList<>(testClassMethods);
     }
 
     private void findMethods() throws ClassNotFoundException
@@ -112,37 +46,12 @@ public class TestClass
 
         for (final Method method : allMethods) {
             if (ACCESSIBLE_MODIFIERS.contains(method.getModifiers())) {
-                final TestClassMethod accessibleTestClassMethod = new TestClassMethod();
+                final TestClassMethod testClassMethod = new TestClassMethod(method);
 
-                accessibleTestClassMethod.setMethodName(method.getName());
-                accessibleTestClassMethod.setVisibility(method.getModifiers());
-                accessibleTestClassMethod.setReturnType(method.getReturnType());
-                accessibleTestClassMethod.findParameters(method);
+                testClassMethod.findMethodBody(body);
 
-                testClassMethods.add(accessibleTestClassMethod);
+                testClassMethods.add(testClassMethod);
             }
         }
-
-        for (final TestClassMethod<?> testClassMethod : testClassMethods) {
-            testClassMethod.findMethodBody(body);
-        }
-    }
-
-    private void findRobustness()
-    {
-        System.out.println("Generate robust test cases?");
-        isRobust = new Scanner(System.in, StandardCharsets.UTF_8.name()).nextBoolean();
-    }
-
-    private void findTestType()
-    {
-        System.out.println("What type of tests to generate?");
-        testType = TestType.valueOf(new Scanner(System.in, StandardCharsets.UTF_8.name()).nextLine().trim().toUpperCase().replace(' ', '_'));
-    }
-
-    private void findIsOnOutput()
-    {
-        System.out.println("Test on output of program?");
-        isOnOutput = new Scanner(System.in, StandardCharsets.UTF_8.name()).nextBoolean();
     }
 }

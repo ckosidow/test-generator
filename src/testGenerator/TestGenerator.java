@@ -6,22 +6,26 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Scanner;
 import java.util.StringJoiner;
 
 public class TestGenerator
 {
     private static final String OUPUT_LOCATION = "test/testGenerator/outputClasses/";
+    private static TestType testType;
+    private static boolean isRobust;
 
     public static void main(final String... classNames) throws IOException, ClassNotFoundException
     {
-        for (final String className : classNames) {
-            generateTestCases(className);
-        }
-    }
+        System.out.println("What type of tests to generate?");
+        testType = TestType.valueOf(new Scanner(System.in, StandardCharsets.UTF_8.name()).nextLine().trim().toUpperCase().replace(' ', '_'));
 
-    private static void generateTestCases(final String className) throws IOException, ClassNotFoundException
-    {
-        writeTestCases(new TestClass(className));
+        System.out.println("Generate robust test cases?");
+        isRobust = new Scanner(System.in, StandardCharsets.UTF_8.name()).nextBoolean();
+
+        for (final String className : classNames) {
+            writeTestCases(new TestClass(className));
+        }
     }
 
     private static void writeTestCases(final TestClass testClass)
@@ -30,7 +34,6 @@ public class TestGenerator
 
         try (final FileOutputStream outStream = new FileOutputStream(OUPUT_LOCATION + "Test" + className + ".java")) {
             final String classInstanceName = "mock" + className;
-            final TestType testType = testClass.getTestType();
 
             outStream.write(("package testGenerator.outputClasses;" + System.lineSeparator()
                     + System.lineSeparator()
@@ -63,16 +66,16 @@ public class TestGenerator
             final FileOutputStream outStream,
             final String classInstanceName) throws IOException
     {
-        for (final TestClassMethod<?> method : testClass.getTestClassMethods()) {
-            final List<StringJoiner> joinerList = new ArrayList<>();
+        for (final TestClassMethod method : testClass.getTestClassMethods()) {
+            final List<StringJoiner> parameters = new ArrayList<>();
             final int paramCount = method.getTestClassParameters().size();
-            final int uniqueTestCount = testClass.isRobust()
+            final int uniqueTestCount = isRobust
                     ? 6
                     : 4;
             final int testAmt = uniqueTestCount * paramCount + 1;
 
             for (int i = 0; i < testAmt; i++) {
-                joinerList.add(new StringJoiner(", ", "(", ")"));
+                parameters.add(new StringJoiner(", ", "(", ")"));
             }
 
             for (int i = 0; i < paramCount; i++) {
@@ -81,30 +84,30 @@ public class TestGenerator
                 final int min = Integer.parseInt(parameterExtremes.get(ExtremeType.GLOBAL_MIN));
                 final int mid = (max + min) / 2;
 
-                joinerList.get(0).add(String.valueOf(mid));
+                parameters.get(0).add(String.valueOf(mid));
 
                 for (int x = 0; x < paramCount; x++) {
                     final int blockStart = (x * uniqueTestCount) + 1;
 
                     if (i == x) {
-                        joinerList.get(blockStart).add(String.valueOf(min));
-                        joinerList.get(blockStart + 1).add(String.valueOf(min + 1));
-                        joinerList.get(blockStart + 2).add(String.valueOf(max - 1));
-                        joinerList.get(blockStart + 3).add(String.valueOf(max));
+                        parameters.get(blockStart).add(String.valueOf(min));
+                        parameters.get(blockStart + 1).add(String.valueOf(min + 1));
+                        parameters.get(blockStart + 2).add(String.valueOf(max - 1));
+                        parameters.get(blockStart + 3).add(String.valueOf(max));
 
                         if (uniqueTestCount == 6) {
-                            joinerList.get(blockStart + 4).add(String.valueOf(min - 1));
-                            joinerList.get(blockStart + 5).add(String.valueOf(max + 1));
+                            parameters.get(blockStart + 4).add(String.valueOf(min - 1));
+                            parameters.get(blockStart + 5).add(String.valueOf(max + 1));
                         }
                     } else {
                         for (int y = 0; y < uniqueTestCount; y++) {
-                            joinerList.get(blockStart + y).add(String.valueOf(mid));
+                            parameters.get(blockStart + y).add(String.valueOf(mid));
                         }
                     }
                 }
             }
 
-            printAllTests(outStream, classInstanceName, method, joinerList);
+            printAllTests(outStream, classInstanceName, method, parameters);
         }
     }
 
@@ -113,15 +116,15 @@ public class TestGenerator
             final FileOutputStream outStream,
             final String classInstanceName) throws IOException
     {
-        for (final TestClassMethod<?> method : testClass.getTestClassMethods()) {
-            final List<StringJoiner> joinerList = new ArrayList<>();
+        for (final TestClassMethod method : testClass.getTestClassMethods()) {
+            final List<StringJoiner> parameters = new ArrayList<>();
             final int paramCount = method.getTestClassParameters().size();
-            final int uniqueTestCount = testClass.isRobust()
+            final int uniqueTestCount = isRobust
                     ? 7
                     : 5;
 
             for (int i = 0; i < Math.pow(uniqueTestCount, paramCount); i++) {
-                joinerList.add(new StringJoiner(", ", "(", ")"));
+                parameters.add(new StringJoiner(", ", "(", ")"));
             }
 
             for (int i = 0; i < paramCount; i++) {
@@ -130,26 +133,26 @@ public class TestGenerator
                 final int min = Integer.parseInt(parameterExtremes.get(ExtremeType.GLOBAL_MIN));
                 final int mid = (max + min) / 2;
                 final int uniqueToParam = (int) Math.pow(uniqueTestCount, i);
-                final int repeatSize = joinerList.size() / (int) Math.pow(uniqueTestCount, i + 1);
-                final int groupSize = joinerList.size() / uniqueToParam;
+                final int repeatSize = parameters.size() / (int) Math.pow(uniqueTestCount, i + 1);
+                final int groupSize = parameters.size() / uniqueToParam;
 
                 for (int x = 0; x < uniqueToParam; x++) {
                     final int startGroup = groupSize * x;
 
-                    findParameterValues(startGroup, 0, repeatSize, joinerList, min);
-                    findParameterValues(startGroup, 1, repeatSize, joinerList, min + 1);
-                    findParameterValues(startGroup, 2, repeatSize, joinerList, mid);
-                    findParameterValues(startGroup, 3, repeatSize, joinerList, max - 1);
-                    findParameterValues(startGroup, 4, repeatSize, joinerList, max);
+                    findParameterValues(startGroup, 0, repeatSize, parameters, min);
+                    findParameterValues(startGroup, 1, repeatSize, parameters, min + 1);
+                    findParameterValues(startGroup, 2, repeatSize, parameters, mid);
+                    findParameterValues(startGroup, 3, repeatSize, parameters, max - 1);
+                    findParameterValues(startGroup, 4, repeatSize, parameters, max);
 
                     if (uniqueTestCount == 7) {
-                        findParameterValues(startGroup, 5, repeatSize, joinerList, min - 1);
-                        findParameterValues(startGroup, 6, repeatSize, joinerList, max + 1);
+                        findParameterValues(startGroup, 5, repeatSize, parameters, min - 1);
+                        findParameterValues(startGroup, 6, repeatSize, parameters, max + 1);
                     }
                 }
             }
 
-            printAllTests(outStream, classInstanceName, method, joinerList);
+            printAllTests(outStream, classInstanceName, method, parameters);
         }
     }
 

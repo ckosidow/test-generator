@@ -13,6 +13,7 @@ public class Line
         this.content = content;
     }
 
+    // Not used currently. Expected to be necessary for finding usages later
     public int getNumber()
     {
         return number;

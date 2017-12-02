@@ -6,30 +6,15 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
 
-public class TestClassParameter<T>
+public class TestClassParameter
 {
-    private T type;
-    private String name;
-    private Map<ExtremeType, String> extremes = new HashMap<>();
+    private final String name;
+    private final Map<ExtremeType, String> extremes = new HashMap<>();
 
-    public T getType()
-    {
-        return type;
-    }
-
-    public void setType(final T type)
-    {
-        this.type = type;
-    }
-
-    public String getName()
-    {
-        return name;
-    }
-
-    public void setName(final String name)
-    {
+    public TestClassParameter(final String name) {
         this.name = name;
+
+        findExtremes();
     }
 
     public Map<ExtremeType, String> getExtremes()
@@ -37,14 +22,7 @@ public class TestClassParameter<T>
         return Collections.unmodifiableMap(extremes);
     }
 
-    public void setExtremes(final Map<ExtremeType, String> extremes)
-    {
-        this.extremes = extremes == null
-                ? new HashMap<>()
-                : new HashMap<>(extremes);
-    }
-
-    public void findExtremes()
+    private void findExtremes()
     {
         final Scanner input = new Scanner(System.in, StandardCharsets.UTF_8.name());
 

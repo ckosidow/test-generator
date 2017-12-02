@@ -9,66 +9,26 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class TestClassMethod<T>
+public class TestClassMethod
 {
-    private T returnType;
-    private String methodName;
-    private List<Line> body = new ArrayList<>();
-    private List<TestClassParameter<?>> testClassParameters = new ArrayList<>();
-    private int visibility;
+    private final Method method;
+    private final List<Line> body = new ArrayList<>();
+    private final List<TestClassParameter> testClassParameters = new ArrayList<>();
 
-    public T getReturnType()
-    {
-        return returnType;
-    }
+    public TestClassMethod(final Method method) {
+        this.method = method;
 
-    public void setReturnType(final T returnType)
-    {
-        this.returnType = returnType;
+        findParameters();
     }
 
     public String getMethodName()
     {
-        return methodName;
+        return method.getName();
     }
 
-    public void setMethodName(final String methodName)
-    {
-        this.methodName = methodName;
-    }
-
-    public List<Line> getBody()
-    {
-        return new ArrayList<>(body);
-    }
-
-    public void setBody(final List<Line> body)
-    {
-        this.body = body == null
-                ? new ArrayList<>()
-                : new ArrayList<>(body);
-    }
-
-    public List<TestClassParameter<?>> getTestClassParameters()
+    public List<TestClassParameter> getTestClassParameters()
     {
         return new ArrayList<>(testClassParameters);
-    }
-
-    public void setTestClassParameters(final List<TestClassParameter<?>> testClassParameters)
-    {
-        this.testClassParameters = testClassParameters == null
-                ? new ArrayList<>()
-                : new ArrayList<>(testClassParameters);
-    }
-
-    public int getVisibility()
-    {
-        return visibility;
-    }
-
-    public void setVisibility(final int visibility)
-    {
-        this.visibility = visibility;
     }
 
     public void findMethodBody(final List<Line> classBody)
@@ -78,20 +38,22 @@ public class TestClassMethod<T>
         int closeBracketCount = 0;
 
         for (final Line line : classBody) {
+            final String lineContent = line.getContent();
+
             if (!inBody) {
-                if (line.getContent().matches(".*" + returnType + "\\s*" + methodName + "(\\s*\\(.*|\\s*&)")) {
+                if (lineContent.matches(".*" + method.getReturnType() + "\\s*" + method.getName() + "(\\s*\\(.*|\\s*&)")) {
                     body.add(line);
 
-                    openBracketCount = StringUtils.countMatches(line.getContent(), "{");
-                    closeBracketCount = StringUtils.countMatches(line.getContent(), "}");
+                    openBracketCount = StringUtils.countMatches(lineContent, "{");
+                    closeBracketCount = StringUtils.countMatches(lineContent, "}");
 
                     inBody = true;
                 }
             } else {
                 body.add(line);
 
-                openBracketCount += StringUtils.countMatches(line.getContent(), "{");
-                closeBracketCount += StringUtils.countMatches(line.getContent(), "}");
+                openBracketCount += StringUtils.countMatches(lineContent, "{");
+                closeBracketCount += StringUtils.countMatches(lineContent, "}");
 
                 if (openBracketCount > 0 && openBracketCount - closeBracketCount < 1) {
                     break;
@@ -100,27 +62,13 @@ public class TestClassMethod<T>
         }
     }
 
-    public void findParameters(final Method reflectMethod)
+    private void findParameters()
     {
-        findParameterInfo(reflectMethod);
-
-        for (final TestClassParameter<?> testClassParameter : testClassParameters) {
-            testClassParameter.findExtremes();
-        }
-    }
-
-    private void findParameterInfo(final Method reflectMethod)
-    {
-        final List<Parameter> reflectParameters = Arrays.asList(reflectMethod.getParameters());
+        final List<Parameter> reflectParameters = Arrays.asList(method.getParameters());
+        final String[] paramNames = new LocalVariableTableParameterNameDiscoverer().getParameterNames(method);
 
         for (int i = 0; i < reflectParameters.size(); i++) {
-            final Parameter parameter = reflectParameters.get(i);
-            final TestClassParameter methodParam = new TestClassParameter();
-
-            methodParam.setType(parameter.getType());
-            methodParam.setName(new LocalVariableTableParameterNameDiscoverer().getParameterNames(reflectMethod)[i]);
-
-            testClassParameters.add(methodParam);
+            testClassParameters.add(new TestClassParameter(paramNames[i]));
         }
     }
 }
