@@ -12,23 +12,25 @@ import java.util.StringJoiner;
 public class TestGenerator
 {
     private static final String OUPUT_LOCATION = "test/testGenerator/outputClasses/";
-    private static TestType testType;
-    private static boolean isRobust;
 
     public static void main(final String... classNames) throws IOException, ClassNotFoundException
     {
         System.out.println("What type of tests to generate?");
-        testType = TestType.valueOf(new Scanner(System.in, StandardCharsets.UTF_8.name()).nextLine().trim().toUpperCase().replace(' ', '_'));
+        final TestType testType = TestType.valueOf(new Scanner(System.in, StandardCharsets.UTF_8.name()).nextLine().trim().toUpperCase().replace(' ',
+            '_'));
 
         System.out.println("Generate robust test cases?");
-        isRobust = new Scanner(System.in, StandardCharsets.UTF_8.name()).nextBoolean();
+        final boolean isRobust = new Scanner(System.in, StandardCharsets.UTF_8.name()).nextBoolean();
 
         for (final String className : classNames) {
-            writeTestCases(new TestClass(className));
+            writeTestCases(new TestClass(className), testType, isRobust);
         }
     }
 
-    private static void writeTestCases(final TestClass testClass)
+    private static void writeTestCases(
+            final TestClass testClass,
+            final TestType testType,
+            final boolean isRobust)
     {
         final String className = testClass.getClassName();
 
@@ -50,9 +52,9 @@ public class TestGenerator
                     + "    private " + className + ' ' + classInstanceName + ';' + System.lineSeparator()).getBytes(StandardCharsets.UTF_8));
 
             if (testType == TestType.BOUNDARY_VALUE) {
-                determineBVATests(testClass, outStream, classInstanceName);
+                determineBVATests(testClass, outStream, classInstanceName, isRobust);
             } else if (testType == TestType.WORST_CASE) {
-                determineWCTests(testClass, outStream, classInstanceName);
+                determineWCTests(testClass, outStream, classInstanceName, isRobust);
             }
 
             outStream.write("}".getBytes(StandardCharsets.UTF_8));
@@ -64,7 +66,8 @@ public class TestGenerator
     private static void determineBVATests(
             final TestClass testClass,
             final FileOutputStream outStream,
-            final String classInstanceName) throws IOException
+            final String classInstanceName,
+            final boolean isRobust) throws IOException
     {
         for (final TestClassMethod method : testClass.getTestClassMethods()) {
             final List<StringJoiner> parameters = new ArrayList<>();
@@ -114,7 +117,8 @@ public class TestGenerator
     private static void determineWCTests(
             final TestClass testClass,
             final FileOutputStream outStream,
-            final String classInstanceName) throws IOException
+            final String classInstanceName,
+            final boolean isRobust) throws IOException
     {
         for (final TestClassMethod method : testClass.getTestClassMethods()) {
             final List<StringJoiner> parameters = new ArrayList<>();
