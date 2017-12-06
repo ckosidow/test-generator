@@ -49,7 +49,7 @@ public class WorstCaseGenerator extends Generator
                     findParameterValues(startGroup, 3, repeatSize, parameters, max - 1);
                     findParameterValues(startGroup, 4, repeatSize, parameters, max);
 
-                    if (uniqueTestCount == 7) {
+                    if (generateRobust) {
                         findParameterValues(startGroup, 5, repeatSize, parameters, min - 1);
                         findParameterValues(startGroup, 6, repeatSize, parameters, max + 1);
                     }

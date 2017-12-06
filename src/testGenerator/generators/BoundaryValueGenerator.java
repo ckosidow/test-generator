@@ -49,7 +49,7 @@ public class BoundaryValueGenerator extends Generator
                         parameters.get(blockStart + 2).add(String.valueOf(max - 1));
                         parameters.get(blockStart + 3).add(String.valueOf(max));
 
-                        if (uniqueTestCount == 6) {
+                        if (generateRobust) {
                             parameters.get(blockStart + 4).add(String.valueOf(min - 1));
                             parameters.get(blockStart + 5).add(String.valueOf(max + 1));
                         }
