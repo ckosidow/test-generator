@@ -8,8 +8,10 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Scanner;
 
-public class TestGenerator {
-    public static void main(final String... classNames) throws IOException, ClassNotFoundException {
+public class TestGenerator
+{
+    public static void main(final String... classNames) throws IOException, ClassNotFoundException
+    {
         System.out.println("What type of tests to generate?");
         final TestType testType = TestType.valueOf(new Scanner(System.in, StandardCharsets.UTF_8.name()).nextLine().trim().toUpperCase().replace(' ',
                 '_'));

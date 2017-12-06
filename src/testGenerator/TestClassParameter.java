@@ -10,7 +10,8 @@ public class TestClassParameter
     private final String name;
     private final Map<ExtremeType, String> extremes = new EnumMap<>(ExtremeType.class);
 
-    public TestClassParameter(final String name) {
+    public TestClassParameter(final String name)
+    {
         this.name = name;
 
         findExtremes();

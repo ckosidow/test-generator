@@ -11,13 +11,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.StringJoiner;
 
-public class WorstCaseGenerator extends Generator {
+public class WorstCaseGenerator extends Generator
+{
     @Override
     protected void generateTests(
             final TestClass testClass,
             final FileOutputStream outStream,
             final String classInstanceName,
-            final boolean generateRobust) throws IOException {
+            final boolean generateRobust) throws IOException
+    {
         for (final TestClassMethod method : testClass.getTestClassMethods()) {
             final List<StringJoiner> parameters = new ArrayList<>();
             final int paramCount = method.getTestClassParameters().size();

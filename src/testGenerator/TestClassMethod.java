@@ -15,7 +15,8 @@ public class TestClassMethod
     private final List<Line> body = new ArrayList<>();
     private final List<TestClassParameter> testClassParameters = new ArrayList<>();
 
-    public TestClassMethod(final Method method) {
+    public TestClassMethod(final Method method)
+    {
         this.method = method;
 
         findParameters();

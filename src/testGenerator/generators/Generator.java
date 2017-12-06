@@ -9,12 +9,14 @@ import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.StringJoiner;
 
-public abstract class Generator {
+public abstract class Generator
+{
     private static final String OUPUT_LOCATION = "test/testGenerator/outputClasses/";
 
     public void writeTestCases(
             final TestClass testClass,
-            final boolean generateRobust) {
+            final boolean generateRobust)
+    {
         final String className = testClass.getClassName();
 
         try (final FileOutputStream outStream = new FileOutputStream(OUPUT_LOCATION + "Test" + className + ".java")) {
@@ -53,7 +55,8 @@ public abstract class Generator {
             final int startSubGroup,
             final int repeatSize,
             final List<StringJoiner> joinerList,
-            final int value) {
+            final int value)
+    {
         for (int y = 0; y < repeatSize; y++) {
             joinerList.get(startGroup + (repeatSize * startSubGroup) + y).add(String.valueOf(value));
         }
@@ -63,7 +66,8 @@ public abstract class Generator {
             final FileOutputStream outStream,
             final String classInstanceName,
             final TestClassMethod method,
-            final List<StringJoiner> joinerList) throws IOException {
+            final List<StringJoiner> joinerList) throws IOException
+    {
         final int testCount = joinerList.size();
 
         for (int i = 0; i < testCount; i++) {
