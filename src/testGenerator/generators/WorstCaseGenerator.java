@@ -4,7 +4,6 @@ import testGenerator.ExtremeType;
 import testGenerator.TestClass;
 import testGenerator.TestClassMethod;
 
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -14,12 +13,13 @@ import java.util.StringJoiner;
 public class WorstCaseGenerator extends Generator
 {
     @Override
-    protected void generateTests(
+    protected String generateTests(
             final TestClass testClass,
-            final FileOutputStream outStream,
             final String classInstanceName,
             final boolean generateRobust) throws IOException
     {
+        String out = "";
+
         for (final TestClassMethod method : testClass.getTestClassMethods()) {
             final List<StringJoiner> parameters = new ArrayList<>();
             final int paramCount = method.getTestClassParameters().size();
@@ -56,7 +56,9 @@ public class WorstCaseGenerator extends Generator
                 }
             }
 
-            printAllTests(outStream, classInstanceName, method, parameters);
+            out += printAllTests(classInstanceName, method, parameters);
         }
+
+        return out;
     }
 }

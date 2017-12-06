@@ -34,19 +34,16 @@ public abstract class Generator
                     + "public class Test" + className + System.lineSeparator()
                     + '{' + System.lineSeparator()
                     + "    @InjectMocks" + System.lineSeparator()
-                    + "    private " + className + ' ' + classInstanceName + ';' + System.lineSeparator()).getBytes(StandardCharsets.UTF_8));
-
-            generateTests(testClass, outStream, classInstanceName, generateRobust);
-
-            outStream.write("}".getBytes(StandardCharsets.UTF_8));
+                    + "    private " + className + ' ' + classInstanceName + ';' + System.lineSeparator()
+                    + generateTests(testClass, classInstanceName, generateRobust)
+                    + '}').getBytes(StandardCharsets.UTF_8));
         } catch (final IOException e) {
             System.err.println("Something went wrong: " + e.getLocalizedMessage());
         }
     }
 
-    protected abstract void generateTests(
+    protected abstract String generateTests(
             final TestClass testClass,
-            final FileOutputStream outStream,
             final String classInstanceName,
             final boolean generateRobust) throws IOException;
 
@@ -62,21 +59,23 @@ public abstract class Generator
         }
     }
 
-    protected void printAllTests(
-            final FileOutputStream outStream,
+    protected String printAllTests(
             final String classInstanceName,
             final TestClassMethod method,
             final List<StringJoiner> joinerList) throws IOException
     {
         final int testCount = joinerList.size();
+        String out = "";
 
         for (int i = 0; i < testCount; i++) {
-            outStream.write((System.lineSeparator()
+            out += System.lineSeparator()
                     + "    @Test" + System.lineSeparator()
                     + "    public void test" + i + "()" + System.lineSeparator()
                     + "    {" + System.lineSeparator()
                     + "        " + classInstanceName + '.' + method.getMethodName() + joinerList.get(i) + ';' + System.lineSeparator()
-                    + "    }" + System.lineSeparator()).getBytes(StandardCharsets.UTF_8));
+                    + "    }" + System.lineSeparator();
         }
+
+        return out;
     }
 }
