@@ -1,13 +1,12 @@
 package testGenerator.generators;
 
-import testGenerator.ExtremeType;
+import testGenerator.Extremes;
 import testGenerator.TestClass;
 import testGenerator.TestClassMethod;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.StringJoiner;
 
 public class BoundaryValueGenerator extends Generator
@@ -18,7 +17,7 @@ public class BoundaryValueGenerator extends Generator
             final String classInstanceName,
             final boolean generateRobust) throws IOException
     {
-        String out = "";
+        final StringBuilder out = new StringBuilder();
 
         for (final TestClassMethod method : testClass.getTestClassMethods()) {
             final List<StringJoiner> parameters = new ArrayList<>();
@@ -33,9 +32,9 @@ public class BoundaryValueGenerator extends Generator
             }
 
             for (int i = 0; i < paramCount; i++) {
-                final Map<ExtremeType, String> parameterExtremes = method.getTestClassParameters().get(i).getExtremes();
-                final int max = Integer.parseInt(parameterExtremes.get(ExtremeType.GLOBAL_MAX));
-                final int min = Integer.parseInt(parameterExtremes.get(ExtremeType.GLOBAL_MIN));
+                final Extremes parameterExtremes = method.getTestClassParameters().get(i).getExtremes();
+                final int max = Integer.parseInt(parameterExtremes.getGlobalMax());
+                final int min = Integer.parseInt(parameterExtremes.getGlobalMin());
                 final int mid = (max + min) / 2;
 
                 parameters.get(0).add(String.valueOf(mid));
@@ -61,9 +60,9 @@ public class BoundaryValueGenerator extends Generator
                 }
             }
 
-            out += printAllTests(classInstanceName, method, parameters);
+            out.append(printAllTests(classInstanceName, method, parameters));
         }
 
-        return out;
+        return out.toString();
     }
 }

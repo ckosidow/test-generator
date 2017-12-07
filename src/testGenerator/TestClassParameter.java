@@ -1,14 +1,13 @@
 package testGenerator;
 
 import java.nio.charset.StandardCharsets;
-import java.util.EnumMap;
-import java.util.Map;
 import java.util.Scanner;
 
-public class TestClassParameter
+public class TestClassParameter<T>
 {
+    private T type;
     private final String name;
-    private final Map<ExtremeType, String> extremes = new EnumMap<>(ExtremeType.class);
+    private final Extremes extremes = new Extremes();
 
     public TestClassParameter(final String name)
     {
@@ -17,19 +16,23 @@ public class TestClassParameter
         findExtremes();
     }
 
-    public Map<ExtremeType, String> getExtremes()
+    public Extremes getExtremes()
     {
-        return new EnumMap<>(extremes);
+        return extremes;
     }
 
     private void findExtremes()
     {
         final Scanner input = new Scanner(System.in, StandardCharsets.UTF_8.name());
 
+//        if (!ClassUtils.isPrimitiveOrWrapper(type.getClass())) {
+//            // Recursively find the extremes of the methods/fields used inside this object
+//        }
+
         System.out.println("What is the max value for " + name + '?');
-        extremes.put(ExtremeType.GLOBAL_MAX, input.nextLine());
+        extremes.setGlobalMax(input.nextLine());
 
         System.out.println("What is the min value for " + name + '?');
-        extremes.put(ExtremeType.GLOBAL_MIN, input.nextLine());
+        extremes.setGlobalMin(input.nextLine());
     }
 }

@@ -13,7 +13,7 @@ public class TestClassMethod
 {
     private final Method method;
     private final List<Line> body = new ArrayList<>();
-    private final List<TestClassParameter> testClassParameters = new ArrayList<>();
+    private final List<TestClassParameter<?>> testClassParameters = new ArrayList<>();
 
     public TestClassMethod(final Method method)
     {
@@ -27,7 +27,7 @@ public class TestClassMethod
         return method.getName();
     }
 
-    public List<TestClassParameter> getTestClassParameters()
+    public List<TestClassParameter<?>> getTestClassParameters()
     {
         return new ArrayList<>(testClassParameters);
     }
