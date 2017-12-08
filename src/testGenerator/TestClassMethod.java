@@ -6,20 +6,22 @@ import org.springframework.core.LocalVariableTableParameterNameDiscoverer;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class TestClassMethod
 {
     private final Method method;
     private final List<Line> body = new ArrayList<>();
-    private final List<TestClassParameter<?>> testClassParameters = new ArrayList<>();
+    private final List<TestClassParameter> testClassParameters = new ArrayList<>();
 
-    public TestClassMethod(final Method method)
+    public TestClassMethod(
+            final Method method,
+            final List<Line> body)
     {
         this.method = method;
 
         findParameters();
+        findMethodBody(body);
     }
 
     public String getMethodName()
@@ -27,12 +29,12 @@ public class TestClassMethod
         return method.getName();
     }
 
-    public List<TestClassParameter<?>> getTestClassParameters()
+    public List<TestClassParameter> getTestClassParameters()
     {
         return new ArrayList<>(testClassParameters);
     }
 
-    public void findMethodBody(final List<Line> classBody)
+    private void findMethodBody(final List<Line> classBody)
     {
         boolean inBody = false;
         int openBracketCount = 0;
@@ -65,11 +67,11 @@ public class TestClassMethod
 
     private void findParameters()
     {
-        final List<Parameter> reflectParameters = Arrays.asList(method.getParameters());
+        final Parameter[] parameters = method.getParameters();
         final String[] paramNames = new LocalVariableTableParameterNameDiscoverer().getParameterNames(method);
 
-        for (int i = 0; i < reflectParameters.size(); i++) {
-            testClassParameters.add(new TestClassParameter(paramNames[i]));
+        for (int i = 0; i < parameters.length; i++) {
+            testClassParameters.add(new TestClassParameter(paramNames[i], parameters[i]));
         }
     }
 }

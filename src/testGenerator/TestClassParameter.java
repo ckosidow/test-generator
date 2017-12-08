@@ -1,17 +1,21 @@
 package testGenerator;
 
+import java.lang.reflect.Parameter;
 import java.nio.charset.StandardCharsets;
 import java.util.Scanner;
 
-public class TestClassParameter<T>
+public class TestClassParameter
 {
-    private T type;
     private final String name;
     private final Extremes extremes = new Extremes();
+    private final Parameter parameter;
 
-    public TestClassParameter(final String name)
+    public TestClassParameter(
+            final String name,
+            final Parameter parameter)
     {
         this.name = name;
+        this.parameter = parameter;
 
         findExtremes();
     }
@@ -25,7 +29,7 @@ public class TestClassParameter<T>
     {
         final Scanner input = new Scanner(System.in, StandardCharsets.UTF_8.name());
 
-//        if (!ClassUtils.isPrimitiveOrWrapper(type.getClass())) {
+//        if (!ClassUtils.isPrimitiveOrWrapper(parameter.getType().getClass())) {
 //            // Recursively find the extremes of the methods/fields used inside this object
 //        }
 

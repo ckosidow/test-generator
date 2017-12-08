@@ -62,7 +62,7 @@ public abstract class Generator
     protected String printAllTests(
             final String classInstanceName,
             final TestClassMethod method,
-            final List<StringJoiner> joinerList) throws IOException
+            final List<StringJoiner> joinerList)
     {
         final int testCount = joinerList.size();
         String out = "";

@@ -4,7 +4,6 @@ import testGenerator.Extremes;
 import testGenerator.TestClass;
 import testGenerator.TestClassMethod;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.StringJoiner;
@@ -15,7 +14,7 @@ public class WorstCaseGenerator extends Generator
     protected String generateTests(
             final TestClass testClass,
             final String classInstanceName,
-            final boolean generateRobust) throws IOException
+            final boolean generateRobust)
     {
         final StringBuilder out = new StringBuilder();
 
